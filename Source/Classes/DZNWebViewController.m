@@ -11,7 +11,7 @@
 #import "DZNWebViewController.h"
 #import "DZNPolyActivity.h"
 
-#define DZN_IS_IPAD [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad
+#define DZN_IS_IPAD ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
 #define DZN_IS_LANDSCAPE ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft || [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight)
 
 static char DZNWebViewControllerKVOContext = 0;
@@ -65,6 +65,7 @@ static char DZNWebViewControllerKVOContext = 0;
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     [self commonInit];
 }
 
@@ -85,6 +86,7 @@ static char DZNWebViewControllerKVOContext = 0;
     self.webView.scrollView.delegate = self;
     
     [self.webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+    [self.webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
     self.completedInitialLoad = NO;
 }
 
@@ -94,9 +96,10 @@ static char DZNWebViewControllerKVOContext = 0;
 - (void)loadView
 {
     [super loadView];
-    
+     
     self.view = self.webView;
-    self.automaticallyAdjustsScrollViewInsets = YES;
+    
+     self.automaticallyAdjustsScrollViewInsets = YES;
 }
 
 - (void)viewDidLoad
@@ -691,13 +694,6 @@ static char DZNWebViewControllerKVOContext = 0;
     [self.progressView setProgress:progress animated:YES];
 }
 
-- (void)webView:(DZNWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    if (self.webNavigationPrompt > DZNWebNavigationPromptNone) {
-        self.title = self.webView.title;
-    }
-}
-
 - (void)webView:(DZNWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     [self setLoadingError:error];
@@ -841,8 +837,11 @@ static char DZNWebViewControllerKVOContext = 0;
     if ([object isEqual:self.webView] && [keyPath isEqualToString:@"loading"]) {
         [self updateToolbarItems];
     }
+    
+    if ([object isEqual:self.webView] && [keyPath isEqualToString:@"title"]) {
+        self.title = self.webView.title;
+    }
 }
-
 
 #pragma mark - View Auto-Rotation
 
@@ -881,6 +880,7 @@ static char DZNWebViewControllerKVOContext = 0;
         [self.navigationBar removeObserver:self forKeyPath:@"alpha" context:&DZNWebViewControllerKVOContext];
     }
     [self.webView removeObserver:self forKeyPath:@"loading" context:&DZNWebViewControllerKVOContext];
+    [self.webView removeObserver:self forKeyPath:@"title" context:&DZNWebViewControllerKVOContext];
     
     _backwardBarItem = nil;
     _forwardBarItem = nil;

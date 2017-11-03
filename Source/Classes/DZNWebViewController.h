@@ -132,7 +132,6 @@ typedef NS_OPTIONS(NSUInteger, DZNWebNavigationPrompt) {
 - (void)webView:(DZNWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation NS_REQUIRES_SUPER;
 - (void)webView:(DZNWebView *)webView didCommitNavigation:(WKNavigation *)navigation NS_REQUIRES_SUPER;
 - (void)webView:(DZNWebView *)webView didUpdateProgress:(CGFloat)progress NS_REQUIRES_SUPER;
-- (void)webView:(DZNWebView *)webView didFinishNavigation:(WKNavigation *)navigation NS_REQUIRES_SUPER;
 - (void)webView:(DZNWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error NS_REQUIRES_SUPER;
 
 // WKUIDelegate
