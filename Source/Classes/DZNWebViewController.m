@@ -49,7 +49,7 @@ static char DZNWebViewControllerKVOContext = 0;
 - (instancetype)initWithURL:(NSURL *)URL
 {
     NSParameterAssert(URL);
-
+    
     self = [self init];
     if (self) {
         _URL = URL;
@@ -93,10 +93,10 @@ static char DZNWebViewControllerKVOContext = 0;
 - (void)loadView
 {
     [super loadView];
-     
+    
     self.view = self.webView;
     
-     self.automaticallyAdjustsScrollViewInsets = YES;
+    self.automaticallyAdjustsScrollViewInsets = YES;
 }
 
 - (void)viewDidLoad
@@ -111,7 +111,7 @@ static char DZNWebViewControllerKVOContext = 0;
     [UIView performWithoutAnimation:^{
         [self configureToolBars];
     }];
-
+    
     if (!self.webView.URL) {
         [self loadURL:self.URL];
     }
@@ -129,14 +129,14 @@ static char DZNWebViewControllerKVOContext = 0;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+    [super viewWillDisappear:animated];
     
     [self clearProgressViewAnimated:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-	[super viewDidDisappear:animated];
+    [super viewDidDisappear:animated];
     
     [self.webView stopLoading];
 }
@@ -154,6 +154,8 @@ static char DZNWebViewControllerKVOContext = 0;
         UIProgressView *progressView = [[UIProgressView alloc] initWithFrame:frame];
         progressView.trackTintColor = [UIColor clearColor];
         progressView.alpha = 0.0f;
+        
+        [self.navigationBar addSubview:progressView];
         
         _progressView = progressView;
     }
@@ -394,7 +396,7 @@ static char DZNWebViewControllerKVOContext = 0;
     NSDictionary *attributes = @{NSFontAttributeName: titleFont, NSForegroundColorAttributeName: textColor};
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
     NSRange urlRange = [text rangeOfString:url];
-
+    
     if (urlRange.location != NSNotFound && self.showNavigationPromptTitle) {
         [attributedString addAttribute:NSFontAttributeName value:urlFont range:urlRange];
     }
@@ -451,7 +453,7 @@ static char DZNWebViewControllerKVOContext = 0;
     if ([URL isFileURL]) {
         NSData *data = [[NSData alloc] initWithContentsOfURL:URL];
         NSString *HTMLString = [[NSString alloc] initWithData:data encoding:NSStringEncodingConversionAllowLossy];
-
+        
         [self.webView loadHTMLString:HTMLString baseURL:baseURL];
     }
     else {
@@ -490,7 +492,7 @@ static char DZNWebViewControllerKVOContext = 0;
     if (!self.allowHistory || self.webView.backForwardList.backList.count == 0 || sender.state != UIGestureRecognizerStateBegan) {
         return;
     }
-
+    
     [self presentHistoryControllerForTool:DZNWebNavigationToolBackward fromView:sender.view];
 }
 
@@ -537,20 +539,19 @@ static char DZNWebViewControllerKVOContext = 0;
     self.navigationBar = self.navigationController.navigationBar;
     self.navigationBarSuperView = self.navigationBar.superview;
     
-    if (!self.progressView.superview) {
-        [self.navigationBar addSubview:self.progressView];
-    }
+    // reset progressView layout
+    [self destroyProgressViewIfNeeded];
     
     self.navigationController.hidesBarsOnSwipe = self.hideBarsWithGestures;
     self.navigationController.hidesBarsWhenKeyboardAppears = self.hideBarsWithGestures;
     self.navigationController.hidesBarsWhenVerticallyCompact = self.hideBarsWithGestures;
-
+    
     if (self.hideBarsWithGestures) {
         [self.navigationBar addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
         [self.navigationBar addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
         [self.navigationBar addObserver:self forKeyPath:@"alpha" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
     }
-
+    
     if (!DZN_IS_IPAD && self.navigationController.toolbarHidden && self.toolbarItems.count > 0) {
         [self.navigationController setToolbarHidden:NO];
     }
@@ -579,7 +580,7 @@ static char DZNWebViewControllerKVOContext = 0;
 - (void)updateToolbarItems
 {
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:[self.webView isLoading]];
-
+    
     self.backwardBarItem.enabled = [self.webView canGoBack];
     self.forwardBarItem.enabled = [self.webView canGoForward];
     
@@ -699,7 +700,7 @@ static char DZNWebViewControllerKVOContext = 0;
     switch (error.code) {
         case NSURLErrorCancelled:   return;
     }
-
+    
     self.title = nil;
 }
 
@@ -754,7 +755,7 @@ static char DZNWebViewControllerKVOContext = 0;
     
     cell.textLabel.text = item.title;
     cell.detailTextLabel.text = [item.URL absoluteString];
-
+    
     return cell;
 }
 
@@ -897,3 +898,4 @@ static char DZNWebViewControllerKVOContext = 0;
 }
 
 @end
+
