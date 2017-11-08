@@ -155,8 +155,6 @@ static char DZNWebViewControllerKVOContext = 0;
         progressView.trackTintColor = [UIColor clearColor];
         progressView.alpha = 0.0f;
         
-        [self.navigationBar addSubview:progressView];
-        
         _progressView = progressView;
     }
     return _progressView;
