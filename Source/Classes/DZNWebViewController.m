@@ -31,7 +31,6 @@ static char DZNWebViewControllerKVOContext = 0;
 @property (nonatomic, weak) UINavigationBar *navigationBar;
 @property (nonatomic, weak) UIView *navigationBarSuperView;
 
-@property (nonatomic) BOOL completedInitialLoad;
 
 @end
 
@@ -87,9 +86,7 @@ static char DZNWebViewControllerKVOContext = 0;
     
     [self.webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
     [self.webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-    self.completedInitialLoad = NO;
 }
-
 
 #pragma mark - View lifecycle
 
@@ -111,14 +108,10 @@ static char DZNWebViewControllerKVOContext = 0;
 {
     [super viewWillAppear:animated];
     
-    if (!self.completedInitialLoad) {
-        
-        [UIView performWithoutAnimation:^{
-            [self configureToolBars];
-        }];
-        self.completedInitialLoad = YES;
-    }
-    
+    [UIView performWithoutAnimation:^{
+        [self configureToolBars];
+    }];
+
     if (!self.webView.URL) {
         [self loadURL:self.URL];
     }
@@ -546,6 +539,10 @@ static char DZNWebViewControllerKVOContext = 0;
     self.navigationBar = self.navigationController.navigationBar;
     self.navigationBarSuperView = self.navigationBar.superview;
     
+    if (!self.progressView.superview) {
+        [self.navigationBar addSubview:self.progressView];
+    }
+    
     self.navigationController.hidesBarsOnSwipe = self.hideBarsWithGestures;
     self.navigationController.hidesBarsWhenKeyboardAppears = self.hideBarsWithGestures;
     self.navigationController.hidesBarsWhenVerticallyCompact = self.hideBarsWithGestures;
@@ -673,6 +670,8 @@ static char DZNWebViewControllerKVOContext = 0;
         [self destroyProgressViewIfNeeded];
         return;
     }
+    
+    
     
     if (self.progressView.alpha == 0 && progress > 0) {
         
