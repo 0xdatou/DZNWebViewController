@@ -76,6 +76,7 @@ static char DZNWebViewControllerKVOContext = 0;
     self.showLoadingProgress = YES;
     self.hideBarsWithGestures = YES;
     self.allowHistory = YES;
+    self.stopLoadingWhenDisappear = NO;
     
     self.webView = [[DZNWebView alloc] initWithFrame:self.view.bounds configuration:[WKWebViewConfiguration new]];
     self.webView.backgroundColor = [UIColor whiteColor];
@@ -135,7 +136,9 @@ static char DZNWebViewControllerKVOContext = 0;
 {
     [super viewDidDisappear:animated];
     
-    [self.webView stopLoading];
+    if (self.stopLoadingWhenDisappear) {
+        [self.webView stopLoading];
+    }
 }
 
 

@@ -70,6 +70,8 @@ typedef NS_OPTIONS(NSUInteger, DZNWebNavigationPrompt) {
 @property (nonatomic) BOOL allowHistory;
 /** YES if both, the navigation and tool bars should hide when panning vertically. Default is YES. */
 @property (nonatomic) BOOL hideBarsWithGestures;
+/** Yes if will call stopload in viewDidDisappear . Default is NO */
+@property (nonatomic, assign) BOOL stopLoadingWhenDisappear;
 /** [Deprecated] YES if should set the title automatically based on the page title and URL. Default is YES. */
 @property (nonatomic) BOOL showPageTitleAndURL __deprecated_msg("Use 'webNavigationPrompt' instead.");
 
